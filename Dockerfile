@@ -14,7 +14,7 @@ ARG UID=1000
 ARG GID=1000
 
 RUN groupadd -g ${GID} ${USERNAME} \
- && useradd -M -s /bin/sh -u ${UID} -g ${GID} ${USERNAME}
+ && useradd -ms /bin/sh -u ${UID} -g ${GID} ${USERNAME}
 USER ${USERNAME}
 
 
