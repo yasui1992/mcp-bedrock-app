@@ -34,3 +34,5 @@ WORKDIR /app
 
 COPY --from=builder /usr/bin/uv /usr/bin/uvx /usr/bin/
 COPY --from=builder --chown=${UID}:${GID} /app /app
+
+CMD [ "python", "src/main.py" ]
