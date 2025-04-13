@@ -11,3 +11,5 @@ class REPL:
                 text = session.prompt("> ")
             except (KeyboardInterrupt, EOFError):
                 break
+
+        text  # NOTE: Temporary usage to avoid F841
