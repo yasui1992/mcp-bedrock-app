@@ -9,9 +9,12 @@ run-dev:
 	docker run \
 	--name mcp-bedrock-client-dev \
 	--rm \
-    -v src:/app/src \
-	-it \
-	mcp-bedrock-client:dev
+	-v ./src:/app/src \
+	-v ./pyproject.toml:/app/pyproject.toml \
+	-v ./uv.lock:/app/uv.lock \
+	-d \
+	mcp-bedrock-client:dev \
+	tail -f /dev/null
 
 up-dev: build-dev run-dev
 
