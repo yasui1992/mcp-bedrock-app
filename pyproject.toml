@@ -3,3 +3,8 @@ name = "mcp-bedrock-client"
 version = "0.1.0"
 requires-python = ">=3.12"
 dependencies = []
+
+[dependency-groups]
+repr = [
+    "prompt-toolkit>=3.0.50,<4.0",
+]

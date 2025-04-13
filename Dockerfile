@@ -24,7 +24,7 @@ COPY --from=ghcr.io/astral-sh/uv:latest /uv /uvx /bin/
 RUN --mount=type=bind,source=pyproject.toml,target=pyproject.toml \
     --mount=type=bind,source=uv.lock,target=uv.lock \
     --mount=type=cache,target=${UV_CACHE_DIR},sharing=locked \
-    uv sync --frozen
+    uv sync --frozen --group repr
 
 COPY . /app
 
@@ -34,5 +34,7 @@ WORKDIR /app
 
 COPY --from=builder /usr/bin/uv /usr/bin/uvx /usr/bin/
 COPY --from=builder --chown=${UID}:${GID} /app /app
+
+ENV PYTHONPATH=/app/src/
 
 CMD [ "python", "src/main.py" ]

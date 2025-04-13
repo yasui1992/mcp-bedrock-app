@@ -1,9 +1,10 @@
+from mcp_bc import REPL
+
+
 def main():
-    try:
-        while True:
-            pass
-    except KeyboardInterrupt:
-        pass
+    repl = REPL()
+    repl.run()
+
 
 if __name__ == "__main__":
     main()
