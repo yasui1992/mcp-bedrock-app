@@ -1,4 +1,4 @@
-from mcp_bc import REPL
+from mcph import REPL
 
 
 def main():
