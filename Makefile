@@ -16,7 +16,23 @@ run-dev:
 	mcp-bedrock-client:dev \
 	tail -f /dev/null
 
+run-ruff:
+	@docker run \
+	--rm \
+	-i \
+	mcp-bedrock-client:dev \
+	ruff check .
+
+run-mypy:
+	@docker run \
+	--rm \
+	-i \
+	mcp-bedrock-client:dev \
+	mypy .
+
 up-dev: build-dev run-dev
+
+up-check: build-dev run-ruff run-mypy
 
 down-dev:
 	docker rm -f mcp-bedrock-client-dev
