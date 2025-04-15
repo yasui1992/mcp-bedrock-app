@@ -3,12 +3,12 @@ from prompt_toolkit import PromptSession
 
 
 class REPL:
-    def run(self):
+    async def arun(self):
         session = PromptSession()
 
         while True:
             try:
-                text = session.prompt("> ")
+                text = await session.prompt_async("> ")
             except (KeyboardInterrupt, EOFError):
                 break
 

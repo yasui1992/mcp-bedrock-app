@@ -2,7 +2,9 @@
 name = "mcp-bedrock-client"
 version = "0.1.0"
 requires-python = ">=3.12"
-dependencies = []
+dependencies = [
+    "mcp>=1.6.0,<2.0",
+]
 
 [dependency-groups]
 dev = [
