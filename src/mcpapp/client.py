@@ -21,6 +21,7 @@ logger.addHandler(hdlr)
 
 class MCPClient:
     def __init__(self):
+        # TODO: Allow external injection of the MCP server instance
         self._server_params = StdioServerParameters(
             command="uvx",
             args=["awslabs.aws-documentation-mcp-server@latest"],
