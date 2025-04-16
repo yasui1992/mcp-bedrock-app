@@ -4,11 +4,8 @@ from mcpapp import REPL, MCPClient
 
 async def main():
     client = MCPClient()
-    async with client.aconnent_session() as session:
-        repl = REPL()
-        await repl.arun()
-
-        session  # NOTE: Temporary usage to avoid F841
+    repl = REPL(client)
+    await repl.arun()
 
 
 if __name__ == "__main__":
