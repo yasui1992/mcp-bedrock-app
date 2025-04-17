@@ -36,4 +36,5 @@ class MCPClient:
             async with ClientSession(*rw) as session:
                 init_result = await session.initialize()
                 logger.debug(init_result.model_dump_json())
+
                 yield session

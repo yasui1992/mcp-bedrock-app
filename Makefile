@@ -8,6 +8,7 @@ build-dev:
 run-dev:
 	docker run \
 	--name mcp-bedrock-client-dev \
+	--env-file .env \
 	--rm \
 	-v ./src:/app/src \
 	-v ./pyproject.toml:/app/pyproject.toml \
@@ -19,6 +20,7 @@ run-dev:
 run-dev-debug:
 	docker run \
 	--name mcp-bedrock-client-dev \
+	--env-file .env \
 	--rm \
 	-e LOG_LEVEL=debug \
 	-v ./src:/app/src \

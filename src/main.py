@@ -4,7 +4,8 @@ from mcpapp import REPL, MCPClient
 
 async def main():
     client = MCPClient()
-    repl = REPL(client)
+    repl = REPL()
+    await repl.aset_mcp_client(client)
     await repl.arun()
 
 
