@@ -21,17 +21,18 @@ class REPL:
 
             self.agent.set_tools(result.tools)
 
-
     async def arun(self):
         session = PromptSession()
 
         while True:
             try:
                 text = await session.prompt_async("> ")
-                self._handle_input_text(text)
+                await self._handle_input_text(text)
             except (KeyboardInterrupt, EOFError):
                 break
 
-    def _handle_input_text(self, text: str):
+    async def _handle_input_text(self, text: str):
         if len(text) > 0:
-            self.agent.invoke(text)
+            results = self.agent.invoke(text)
+            async for chunk in results:
+                print(chunk)

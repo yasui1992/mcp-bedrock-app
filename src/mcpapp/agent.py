@@ -1,3 +1,4 @@
+from typing import AsyncGenerator
 import json
 import logging
 from typing import Final
@@ -20,11 +21,10 @@ class BedrockAgent:
     def set_tools(self, tools: list[Tool]):
         self._tools = tools
 
-    def invoke(self, text: str):
+    async def invoke(self, text: str) -> AsyncGenerator[str, None]:
         response = self._converse(text)
-        
-        # NOTE: stopReason print is temporary
-        print(response["stopReason"])
+
+        yield response["stopReason"]
 
     def _converse(self, text: str):
         messages = [
