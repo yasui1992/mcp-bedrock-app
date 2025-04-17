@@ -7,16 +7,11 @@ from typing import AsyncGenerator, Final
 from mcp import ClientSession, StdioServerParameters
 from mcp.client.stdio import stdio_client
 
-LOG_LEVEL: Final[str] = os.getenv("LOG_LEVEL", "info").upper()
+
 FASTMCP_LOG_LEVEL: Final[str] = os.getenv("FASTMCP_LOG_LEVEL", "error").upper()
 
 
 logger = logging.getLogger("mcpapp.client")
-logger.setLevel(LOG_LEVEL)
-hdlr = logging.StreamHandler()
-hdlr.setLevel(logging.NOTSET)
-hdlr.setFormatter(logging.Formatter(r"%(asctime)s %(levelname)-8s %(message)s"))
-logger.addHandler(hdlr)
 
 
 class MCPClient:
