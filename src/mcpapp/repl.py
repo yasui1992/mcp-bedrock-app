@@ -2,7 +2,6 @@ import logging
 
 from prompt_toolkit import PromptSession
 
-from mcpapp.client import MCPClient
 from mcpapp.agent import BedrockAgent
 
 
@@ -13,13 +12,6 @@ logger = logging.getLogger("mcpapp.repl")
 class REPL:
     def __init__(self, agent: BedrockAgent):
         self.agent = agent
-
-    async def aset_mcp_client(self, mcp_client: MCPClient):
-        async with mcp_client.aconnent_session() as mcp_session:
-            result = await mcp_session.list_tools()
-            logger.debug(result.model_dump_json())
-
-            self.agent.set_tools(result.tools)
 
     async def arun(self):
         session = PromptSession()
@@ -33,6 +25,6 @@ class REPL:
 
     async def _handle_input_text(self, text: str):
         if len(text) > 0:
-            results = self.agent.invoke(text)
+            results = self.agent.ainvoke(text)
             async for chunk in results:
                 print(chunk)

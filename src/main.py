@@ -19,11 +19,14 @@ logger.addHandler(hdlr)
 
 async def main():
     client = MCPClient()
-    agent = BedrockAgent()
-    repl = REPL(agent)
 
-    await repl.aset_mcp_client(client)
-    await repl.arun()
+    async with client.aconnent_session() as session:
+        agent = BedrockAgent(session)
+        await agent.afetch_tools()
+
+        repl = REPL(agent)
+
+        await repl.arun()
 
 
 if __name__ == "__main__":
