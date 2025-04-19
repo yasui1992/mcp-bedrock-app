@@ -24,9 +24,20 @@ COPY --from=ghcr.io/astral-sh/uv:latest /uv /uvx /bin/
 RUN --mount=type=bind,source=pyproject.toml,target=pyproject.toml \
     --mount=type=bind,source=uv.lock,target=uv.lock \
     --mount=type=cache,target=${UV_CACHE_DIR},sharing=locked \
-    uv sync --frozen --dev --group repr
+    uv sync --frozen --no-dev --group repr
 
 COPY . /app
+
+
+FROM python-nonroot AS prod
+WORKDIR /app
+
+COPY --from=builder /usr/bin/uv /usr/bin/uvx /usr/bin/
+COPY --from=builder --chown=${UID}:${GID} /app /app
+
+ENV PYTHONPATH=/app/src/
+
+CMD [ "python", "src/main.py" ]
 
 
 FROM python-nonroot AS dev
@@ -34,6 +45,13 @@ WORKDIR /app
 
 COPY --from=builder /usr/bin/uv /usr/bin/uvx /usr/bin/
 COPY --from=builder --chown=${UID}:${GID} /app /app
+
+USER root
+RUN --mount=type=bind,source=pyproject.toml,target=pyproject.toml \
+    --mount=type=bind,source=uv.lock,target=uv.lock \
+    --mount=type=cache,target=${UV_CACHE_DIR},sharing=locked \
+    uv sync --frozen --dev --group repr
+USER ${USERNAME}
 
 ENV PYTHONPATH=/app/src/
 

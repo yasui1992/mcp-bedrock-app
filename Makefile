@@ -1,9 +1,34 @@
+build:
+	docker build \
+	--platform linux/x86_64 \
+	--target prod \
+	-t mcp-bedrock-client \
+	.
+
+
 build-dev:
 	docker build \
 	--platform linux/x86_64 \
 	--target dev \
 	-t mcp-bedrock-client:dev \
 	.
+
+run:
+	docker run \
+	--name mcp-bedrock-client \
+	--env-file .env \
+	--rm \
+	-it \
+	mcp-bedrock-client
+
+run-debug:
+	docker run \
+	--name mcp-bedrock-client \
+	--env-file .env \
+	--rm \
+	-e LOG_LEVEL=debug \
+	-it \
+	mcp-bedrock-client
 
 run-dev:
 	docker run \
@@ -44,6 +69,10 @@ run-mypy:
 	-i \
 	mcp-bedrock-client:dev \
 	mypy .
+
+up: build run
+
+up-debug: build run-debug
 
 up-dev: build-dev run-dev
 
