@@ -14,7 +14,7 @@ class REPL:
         self.agent = agent
 
     async def arun(self):
-        session = PromptSession()
+        session: PromptSession = PromptSession()
 
         while True:
             try:

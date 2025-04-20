@@ -13,7 +13,8 @@ logger = logging.getLogger("mcpapp")
 logger.setLevel(LOG_LEVEL)
 hdlr = logging.StreamHandler()
 hdlr.setLevel(logging.NOTSET)
-hdlr.setFormatter(logging.Formatter(r"%(asctime)s %(levelname)-8s %(message)s"))
+fmt = logging.Formatter(r"%(asctime)s %(levelname)-8s %(name)s %(message)s")
+hdlr.setFormatter(fmt)
 logger.addHandler(hdlr)
 
 
