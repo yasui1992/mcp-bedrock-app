@@ -1,7 +1,7 @@
 from typing import AsyncGenerator
 import json
 import logging
-from typing import Final
+import os
 
 import boto3
 from mcp import ClientSession
@@ -22,13 +22,11 @@ from mcpapp.agent.message import (
 
 logger = logging.getLogger(__name__)
 
+BEDROCK_MODEL_ID = os.environ["BEDROCK_MODEL_ID"]
 SYSTEM_PROMPT = "Your an assistant AI. Return your answer in JAPANESE"
 
 
 class BedrockAgent:
-    # TODO: Resolve hard-coding
-    BEDROCK_MODEL_ID: Final[str] = "anthropic.claude-3-haiku-20240307-v1:0"
-
     def __init__(
         self,
         mcp_session: ClientSession,
@@ -113,7 +111,7 @@ class BedrockAgent:
 
         # TODO: Resolve too deeply nested
         response = self._llm_client.converse(
-            modelId=self.BEDROCK_MODEL_ID,
+            modelId=BEDROCK_MODEL_ID,
             messages=bedrock_conversion_messages,
             system=[{"text": SYSTEM_PROMPT}],
             toolConfig=tool_config
