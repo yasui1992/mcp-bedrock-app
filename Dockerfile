@@ -24,7 +24,7 @@ COPY --from=ghcr.io/astral-sh/uv:latest /uv /uvx /bin/
 RUN --mount=type=bind,source=pyproject.toml,target=pyproject.toml \
     --mount=type=bind,source=uv.lock,target=uv.lock \
     --mount=type=cache,target=${UV_CACHE_DIR},sharing=locked \
-    uv sync --frozen --no-dev --group repr
+    uv sync --frozen --no-dev --group repl
 
 COPY . /app
 
@@ -50,7 +50,7 @@ USER root
 RUN --mount=type=bind,source=pyproject.toml,target=pyproject.toml \
     --mount=type=bind,source=uv.lock,target=uv.lock \
     --mount=type=cache,target=${UV_CACHE_DIR},sharing=locked \
-    uv sync --frozen --dev --group repr
+    uv sync --frozen --dev --group repl
 USER ${USERNAME}
 
 ENV PYTHONPATH=/app/src/
