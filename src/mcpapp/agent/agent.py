@@ -1,4 +1,4 @@
-from typing import cast, AsyncGenerator
+from typing import AsyncGenerator
 import json
 import logging
 from typing import Final
@@ -21,6 +21,8 @@ from mcpapp.agent.message import (
 
 
 logger = logging.getLogger(__name__)
+
+SYSTEM_PROMPT = "Your an assistant AI. Return your answer in JAPANESE"
 
 
 class BedrockAgent:
@@ -55,18 +57,12 @@ class BedrockAgent:
             messages.append(assistant_msg)
 
             if stop_reason == "tool_use":
-                for content in assistant_msg.contents:
-                    key, value = next(iter(content.items()))
+                for tool_use_block in assistant_msg.find_tool_uses():
+                    tool_result = await self._acall_tool(tool_use_block)
 
-                    if key == "toolUse":
-                        tool_use_block = cast(ToolUseBlockOutputTypeDef, value)
+                    tool_result_msg = UserMessage([{"toolResult": tool_result}])
+                    messages.append(tool_result_msg)
 
-                        tool_result = await self._acall_tool(tool_use_block)
-                        tool_result_msg = UserMessage([{"toolResult": tool_result}])
-
-                        messages.append(tool_result_msg)
-                    else:
-                        raise ValueError(f"Unsupported content item key: {key}.")
             elif stop_reason == "end_turn":
                 assert len(assistant_msg.contents) == 1
                 yield assistant_msg.contents[0]["text"]
@@ -119,6 +115,7 @@ class BedrockAgent:
         response = self._llm_client.converse(
             modelId=self.BEDROCK_MODEL_ID,
             messages=bedrock_conversion_messages,
+            system=[{"text": SYSTEM_PROMPT}],
             toolConfig=tool_config
         )
         logger.debug(json.dumps(response, ensure_ascii=False))
