@@ -56,6 +56,11 @@ class BedrockAgent:
 
             if stop_reason == "tool_use":
                 for tool_use_block in assistant_msg.find_tool_uses():
+                    yield "==== ToolUse ===="
+                    yield "name: {}".format(tool_use_block["name"])
+                    yield "input: {}".format(tool_use_block["input"])
+                    yield "================="
+
                     tool_result = await self._acall_tool(tool_use_block)
 
                     tool_result_msg = UserMessage([{"toolResult": tool_result}])
