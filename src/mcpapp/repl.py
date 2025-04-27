@@ -5,7 +5,7 @@ from prompt_toolkit import PromptSession
 from mcpapp.agent import BedrockAgent
 
 
-logger = logging.getLogger("mcpapp.repl")
+logger = logging.getLogger(__name__)
 
 
 # TODO: Create an interface protocol to support other IFs (e.g., REST API)

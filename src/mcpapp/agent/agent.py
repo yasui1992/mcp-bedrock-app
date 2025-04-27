@@ -109,7 +109,6 @@ class BedrockAgent:
 
         tool_config = self._tool_config.dump_to_converse_dict()
 
-        # TODO: Resolve too deeply nested
         response = self._llm_client.converse(
             modelId=BEDROCK_MODEL_ID,
             messages=bedrock_conversion_messages,

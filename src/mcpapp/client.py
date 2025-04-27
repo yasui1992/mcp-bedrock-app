@@ -1,29 +1,27 @@
 
 from contextlib import asynccontextmanager
+import json
 import logging
 import os
-from typing import AsyncGenerator, Final
+from typing import AsyncGenerator
 
 from mcp import ClientSession, StdioServerParameters
 from mcp.client.stdio import stdio_client
 
 
-FASTMCP_LOG_LEVEL: Final[str] = os.getenv("FASTMCP_LOG_LEVEL", "error").upper()
+APP_DIR = "/app"
+CONFIG_FILENAME = "mcp_servers.json"
 
 
-logger = logging.getLogger("mcpapp.client")
+logger = logging.getLogger(__name__)
 
 
 class MCPClient:
     def __init__(self):
-        # TODO: Allow external injection of the MCP server instance
-        self._server_params = StdioServerParameters(
-            command="uvx",
-            args=["awslabs.aws-documentation-mcp-server@latest"],
-            env={
-                "FASTMCP_LOG_LEVEL": FASTMCP_LOG_LEVEL
-            }
-        )
+        config_filepath = os.path.join(APP_DIR, CONFIG_FILENAME)
+        with open(config_filepath) as f:
+            server_params = json.load(f)
+        self._server_params = StdioServerParameters(**server_params)
 
     @asynccontextmanager
     async def aconnent_session(self) -> AsyncGenerator[ClientSession, None]:
