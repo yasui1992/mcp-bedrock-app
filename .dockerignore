@@ -1,0 +1,25 @@
+# Git and related
+.git
+.gitignore
+
+# Docker and related
+.dockerignore
+Dockerfile*
+docker-compose*
+
+# Makefile and related
+Makefile*
+
+# Documentation and metadata
+README*
+LICENSE*
+
+# Environment files
+.env*
+
+# Python cache files
+__pycache__/
+*.py[cod]
+
+# Python virtual environments
+.venv*
