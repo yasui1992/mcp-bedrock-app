@@ -2,6 +2,9 @@
 .git
 .gitignore
 
+# Github Actions
+.github
+
 # Docker and related
 .dockerignore
 Dockerfile*
