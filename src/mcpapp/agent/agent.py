@@ -23,7 +23,6 @@ from mcpapp.agent.message import (
 logger = logging.getLogger(__name__)
 
 BEDROCK_MODEL_ID = os.environ["BEDROCK_MODEL_ID"]
-SYSTEM_PROMPT = "Your an assistant AI. Return your answer in JAPANESE"
 
 
 class BedrockAgent:
@@ -117,7 +116,6 @@ class BedrockAgent:
         response = self._llm_client.converse(
             modelId=BEDROCK_MODEL_ID,
             messages=bedrock_conversion_messages,
-            system=[{"text": SYSTEM_PROMPT}],
             toolConfig=tool_config
         )
         logger.debug(json.dumps(response, ensure_ascii=False))
