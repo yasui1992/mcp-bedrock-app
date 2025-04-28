@@ -1,4 +1,4 @@
-# mcp-bedrock-client
+# mcp-bedrock-app
 
 This project is intended for practice.
 

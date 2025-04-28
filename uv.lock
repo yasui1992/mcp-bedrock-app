@@ -197,7 +197,7 @@ wheels = [
 ]
 
 [[package]]
-name = "mcp-bedrock-client"
+name = "mcp-bedrock-app"
 version = "0.1.0"
 source = { virtual = "." }
 dependencies = [
