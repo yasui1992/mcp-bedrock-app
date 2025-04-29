@@ -1,5 +1,5 @@
 from abc import abstractmethod
-from typing import Any, Protocol
+from typing import Protocol
 
 
 class DisplayInterface(Protocol):
@@ -8,5 +8,5 @@ class DisplayInterface(Protocol):
         ...
 
     @abstractmethod
-    def display_tool_use(self, name: str, tool_input: dict[str, Any]):
+    def display_tool_use(self, name: str, tool_input: dict[str, str]):
         ...
