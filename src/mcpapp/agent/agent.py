@@ -13,8 +13,13 @@ from mypy_boto3_bedrock_runtime.type_defs import (
     ToolResultContentBlockOutputTypeDef
 )
 
-from mcpapp.agent.tool_config import ToolConfig
-from mcpapp.agent.message import (
+from .tool_config import ToolConfig
+from .action import (
+    AgentActionProtocol,
+    TextResponseAction,
+    ToolUseAction
+)
+from .message import (
     MessageProtocol,
     AssistantMessage,
     UserMessage
@@ -58,7 +63,7 @@ class BedrockAgent:
 
         self._tool_config.set_tools(result.tools)
 
-    async def ainvoke(self, text: str) -> AsyncGenerator[str, None]:
+    async def ainvoke(self, text: str) -> AsyncGenerator[AgentActionProtocol, None]:
         is_end = False
         original_user_msg = UserMessage([{"text": text}])
 
@@ -76,18 +81,15 @@ class BedrockAgent:
 
             if stop_reason == "tool_use":
                 for tool_use_block in assistant_msg.find_tool_uses():
-                    yield "==== ToolUse ===="
-                    yield f"name: {tool_use_block['name']}"
-                    yield f"input: {tool_use_block['input']}"
-                    yield "================="
+                    yield ToolUseAction.from_bedrock_block(tool_use_block)
 
                     tool_result = await self._acall_tool(tool_use_block)
-
                     tool_result_msg = UserMessage([{"toolResult": tool_result}])
 
             elif stop_reason == "end_turn":
                 assert len(assistant_msg.contents) == 1
-                yield assistant_msg.contents[0]["text"]
+                yield TextResponseAction(assistant_msg.contents[0]["text"])
+
                 is_end = True
             else:
                 raise ValueError(f"Unsupported stop_reason: {stop_reason}")
