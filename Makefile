@@ -38,9 +38,8 @@ run-dev:
 	-v ./src:/app/src \
 	-v ./pyproject.toml:/app/pyproject.toml \
 	-v ./uv.lock:/app/uv.lock \
-	-d \
-	mcp-bedrock-client:dev \
-	tail -f /dev/null
+	-it \
+	mcp-bedrock-client:dev
 
 run-dev-debug:
 	docker run \
@@ -51,10 +50,8 @@ run-dev-debug:
 	-v ./src:/app/src \
 	-v ./pyproject.toml:/app/pyproject.toml \
 	-v ./uv.lock:/app/uv.lock \
-	-d \
-	mcp-bedrock-client:dev \
-	tail -f /dev/null
-
+	-it \
+	mcp-bedrock-client:dev
 
 run-ruff:
 	@docker run \
@@ -79,6 +76,3 @@ up-dev: build-dev run-dev
 up-dev-debug: build-dev run-dev-debug
 
 up-check: build-dev run-ruff run-mypy
-
-down-dev:
-	docker rm -f mcp-bedrock-client-dev
