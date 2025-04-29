@@ -7,7 +7,6 @@ import os
 
 from mcp import ClientSession
 from mcp.types import TextContent
-from mypy_boto3_bedrock_runtime import BedrockRuntimeClient
 
 from .tool_config import ToolConfig
 from .action import (
@@ -20,6 +19,7 @@ from .message import (
 )
 
 if TYPE_CHECKING:
+    from mypy_boto3_bedrock_runtime import BedrockRuntimeClient 
     from mypy_boto3_bedrock_runtime.literals import StopReasonType
     from mypy_boto3_bedrock_runtime.type_defs import (
         ToolUseBlockOutputTypeDef,
@@ -51,7 +51,7 @@ class BedrockAgent:
     def __init__(
         self,
         mcp_session: ClientSession,
-        llm_client: BedrockRuntimeClient,
+        llm_client: "BedrockRuntimeClient",
         max_actions: int = 10,
         language: str = "ja"
     ):

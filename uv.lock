@@ -202,12 +202,12 @@ version = "0.1.0"
 source = { virtual = "." }
 dependencies = [
     { name = "boto3" },
-    { name = "boto3-stubs", extra = ["bedrock-runtime"] },
     { name = "mcp" },
 ]
 
 [package.dev-dependencies]
 dev = [
+    { name = "boto3-stubs", extra = ["bedrock-runtime"] },
     { name = "mypy" },
     { name = "ruff" },
 ]
@@ -218,12 +218,12 @@ repl = [
 [package.metadata]
 requires-dist = [
     { name = "boto3", specifier = ">=1.37.34,<2.0" },
-    { name = "boto3-stubs", extras = ["bedrock-runtime"], specifier = ">=1.37.34,<2.0" },
     { name = "mcp", specifier = ">=1.6.0,<2.0" },
 ]
 
 [package.metadata.requires-dev]
 dev = [
+    { name = "boto3-stubs", extras = ["bedrock-runtime"], specifier = ">=1.37.34,<2.0" },
     { name = "mypy", specifier = ">=1.15.0,<2.0" },
     { name = "ruff", specifier = ">=0.11.5,<1.0" },
 ]
