@@ -2,14 +2,13 @@ import logging
 
 from prompt_toolkit import PromptSession
 
-from mcpapp.agent import BedrockAgent
+from .agent import BedrockAgent, DisplayInterface
 
 
 logger = logging.getLogger(__name__)
 
 
-# TODO: Create an interface protocol to support other IFs (e.g., REST API)
-class REPL:
+class REPL(DisplayInterface):
     def __init__(self, agent: BedrockAgent):
         self.agent = agent
 
@@ -27,4 +26,17 @@ class REPL:
         if len(text) > 0:
             results = self.agent.ainvoke(text)
             async for chunk in results:
-                print(chunk)
+                chunk.display(self)
+
+    def display_text_response(self, text: str):
+        print(text)
+
+    def display_tool_use(
+        self,
+        name: str,
+        tool_input: dict[str, str]
+    ):
+        print("==== ToolUse ====")
+        print(f"name: {name}")
+        print(f"input: {tool_input}")
+        print("=================")

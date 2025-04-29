@@ -1,8 +1,12 @@
+from typing import TYPE_CHECKING
+
 from mcp import Tool
-from mypy_boto3_bedrock_runtime.type_defs import (
-    ToolConfigurationTypeDef,
-    ToolSpecificationTypeDef
-)
+
+if TYPE_CHECKING:
+    from mypy_boto3_bedrock_runtime.type_defs import (
+        ToolConfigurationTypeDef,
+        ToolSpecificationTypeDef
+    )
 
 
 class ToolConfig:
@@ -12,8 +16,8 @@ class ToolConfig:
     def set_tools(self, tools: list[Tool]):
         self._tools = tools
 
-    def dump_to_converse_dict(self) -> ToolConfigurationTypeDef:
-        tool_specs: list[ToolSpecificationTypeDef] = [
+    def dump_to_converse_dict(self) -> "ToolConfigurationTypeDef":
+        tool_specs: list["ToolSpecificationTypeDef"] = [
             {
                 "name": tool.name,
                 "description": tool.description or "",
@@ -23,11 +27,9 @@ class ToolConfig:
             }
             for tool in self._tools
         ]
-        config: ToolConfigurationTypeDef = {
+        config: "ToolConfigurationTypeDef" = {
             "tools": [
-                {
-                    "toolSpec": ts
-                }
+                {"toolSpec": ts}
                 for ts in tool_specs
             ]
         }

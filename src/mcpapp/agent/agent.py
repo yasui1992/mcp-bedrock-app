@@ -1,24 +1,34 @@
-from typing import cast, AsyncGenerator
+from typing import AsyncGenerator
+from typing import cast
+from typing import TYPE_CHECKING
 import json
 import logging
 import os
 
 from mcp import ClientSession
 from mcp.types import TextContent
-from mypy_boto3_bedrock_runtime import BedrockRuntimeClient
-from mypy_boto3_bedrock_runtime.literals import StopReasonType
-from mypy_boto3_bedrock_runtime.type_defs import (
-    ToolUseBlockOutputTypeDef,
-    ToolResultBlockOutputTypeDef,
-    ToolResultContentBlockOutputTypeDef
-)
 
-from mcpapp.agent.tool_config import ToolConfig
-from mcpapp.agent.message import (
-    MessageProtocol,
+from .tool_config import ToolConfig
+from .action import (
+    TextResponseAction,
+    ToolUseAction
+)
+from .message import (
     AssistantMessage,
     UserMessage
 )
+
+if TYPE_CHECKING:
+    from mypy_boto3_bedrock_runtime import BedrockRuntimeClient
+    from mypy_boto3_bedrock_runtime.literals import StopReasonType
+    from mypy_boto3_bedrock_runtime.type_defs import (
+        ToolUseBlockOutputTypeDef,
+        ToolResultBlockOutputTypeDef,
+        ToolResultContentBlockOutputTypeDef
+    )
+
+    from .action import AgentActionProtocol
+    from .message import MessageProtocol
 
 
 logger = logging.getLogger(__name__)
@@ -41,14 +51,12 @@ class BedrockAgent:
     def __init__(
         self,
         mcp_session: ClientSession,
-        llm_client: BedrockRuntimeClient,
-        max_actions: int = 10,
-        language: str = "ja"
+        llm_client: "BedrockRuntimeClient",
+        max_actions: int = 10
     ):
         self.mcp_session = mcp_session
         self.llm_client = llm_client
         self.max_actions = max_actions
-        self.language = language
 
         self._tool_config = ToolConfig()
 
@@ -58,7 +66,7 @@ class BedrockAgent:
 
         self._tool_config.set_tools(result.tools)
 
-    async def ainvoke(self, text: str) -> AsyncGenerator[str, None]:
+    async def ainvoke(self, text: str) -> AsyncGenerator["AgentActionProtocol", None]:
         is_end = False
         original_user_msg = UserMessage([{"text": text}])
 
@@ -66,7 +74,7 @@ class BedrockAgent:
         tool_result_msg: UserMessage | None = None
 
         for _ in range(self.max_actions):
-            messages: list[MessageProtocol] = [original_user_msg]
+            messages: list["MessageProtocol"] = [original_user_msg]
             if assistant_msg is not None:
                 messages.append(assistant_msg)
             if tool_result_msg is not None:
@@ -76,18 +84,15 @@ class BedrockAgent:
 
             if stop_reason == "tool_use":
                 for tool_use_block in assistant_msg.find_tool_uses():
-                    yield "==== ToolUse ===="
-                    yield f"name: {tool_use_block['name']}"
-                    yield f"input: {tool_use_block['input']}"
-                    yield "================="
+                    yield ToolUseAction.from_bedrock_block(tool_use_block)
 
                     tool_result = await self._acall_tool(tool_use_block)
-
                     tool_result_msg = UserMessage([{"toolResult": tool_result}])
 
             elif stop_reason == "end_turn":
                 assert len(assistant_msg.contents) == 1
-                yield assistant_msg.contents[0]["text"]
+                yield TextResponseAction(assistant_msg.contents[0]["text"])
+
                 is_end = True
             else:
                 raise ValueError(f"Unsupported stop_reason: {stop_reason}")
@@ -97,8 +102,8 @@ class BedrockAgent:
 
     async def _acall_tool(
         self,
-        tool_use_block: ToolUseBlockOutputTypeDef
-    ) -> ToolResultBlockOutputTypeDef:
+        tool_use_block: "ToolUseBlockOutputTypeDef"
+    ) -> "ToolResultBlockOutputTypeDef":
 
         tool_response = await self.mcp_session.call_tool(
             tool_use_block["name"],
@@ -110,12 +115,10 @@ class BedrockAgent:
         for cnt in tool_response.content:
             assert isinstance(cnt, TextContent)
 
-            content_to_bedrock = cast(
-                ToolResultContentBlockOutputTypeDef,
+            contents.append(cast(
+                "ToolResultContentBlockOutputTypeDef",
                 {"text": cnt.text}
-            )
-
-            contents.append(content_to_bedrock)
+            ))
 
         return {
             "toolUseId": tool_use_block["toolUseId"],
@@ -124,8 +127,8 @@ class BedrockAgent:
 
     def _call_bedrock_converse(
         self,
-        messages: list[MessageProtocol]
-    ) -> tuple[AssistantMessage, StopReasonType]:
+        messages: list["MessageProtocol"]
+    ) -> tuple[AssistantMessage, "StopReasonType"]:
         bedrock_conversion_messages = [
             msg.to_bedrock_conversion()
             for msg in messages
