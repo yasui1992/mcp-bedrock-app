@@ -8,7 +8,6 @@ from mcp.types import TextContent
 from mypy_boto3_bedrock_runtime import BedrockRuntimeClient
 from mypy_boto3_bedrock_runtime.literals import StopReasonType
 from mypy_boto3_bedrock_runtime.type_defs import (
-    SystemContentBlockTypeDef,
     ToolUseBlockOutputTypeDef,
     ToolResultBlockOutputTypeDef,
     ToolResultContentBlockOutputTypeDef
