@@ -3,9 +3,9 @@ import json
 import logging
 import os
 
-import boto3
 from mcp import ClientSession
 from mcp.types import TextContent
+from mypy_boto3_bedrock_runtime import BedrockRuntimeClient
 from mypy_boto3_bedrock_runtime.literals import StopReasonType
 from mypy_boto3_bedrock_runtime.type_defs import (
     ToolUseBlockOutputTypeDef,
@@ -30,12 +30,13 @@ class BedrockAgent:
     def __init__(
         self,
         mcp_session: ClientSession,
-        max_actions: int = 10
+        llm_client: BedrockRuntimeClient,
+        max_actions: int = 10,
     ):
         self.mcp_session = mcp_session
+        self.llm_client = llm_client
         self.max_actions = max_actions
 
-        self._llm_client = boto3.client("bedrock-runtime")
         self._tool_config = ToolConfig()
 
     async def afetch_tools(self):
@@ -114,7 +115,7 @@ class BedrockAgent:
 
         tool_config = self._tool_config.dump_to_converse_dict()
 
-        response = self._llm_client.converse(
+        response = self.llm_client.converse(
             modelId=BEDROCK_MODEL_ID,
             messages=bedrock_conversion_messages,
             toolConfig=tool_config
