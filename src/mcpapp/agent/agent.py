@@ -24,6 +24,17 @@ from mcpapp.agent.message import (
 logger = logging.getLogger(__name__)
 
 BEDROCK_MODEL_ID = os.environ["BEDROCK_MODEL_ID"]
+SYSTEM_PROMPT = """\
+You are a helpful assistant. To answer user queries:
+
+- Use tools to gather information when needed.
+- Refine your answer using the tool results.
+- Call more tools if necessary.
+
+When you use information from documents, include the document title, URL,
+and a reference section in your response. The reference section should be
+clearly marked as "Reference:" and placed at the end of your answer.
+"""
 
 
 class BedrockAgent:
@@ -32,10 +43,12 @@ class BedrockAgent:
         mcp_session: ClientSession,
         llm_client: BedrockRuntimeClient,
         max_actions: int = 10,
+        language: str = "ja"
     ):
         self.mcp_session = mcp_session
         self.llm_client = llm_client
         self.max_actions = max_actions
+        self.language = language
 
         self._tool_config = ToolConfig()
 
@@ -47,25 +60,30 @@ class BedrockAgent:
 
     async def ainvoke(self, text: str) -> AsyncGenerator[str, None]:
         is_end = False
-        messages: list[MessageProtocol] = [
-            UserMessage([{"text": text}])
-        ]
+        original_user_msg = UserMessage([{"text": text}])
+
+        assistant_msg: AssistantMessage | None = None
+        tool_result_msg: UserMessage | None = None
 
         for _ in range(self.max_actions):
+            messages: list[MessageProtocol] = [original_user_msg]
+            if assistant_msg is not None:
+                messages.append(assistant_msg)
+            if tool_result_msg is not None:
+                messages.append(tool_result_msg)
+
             assistant_msg, stop_reason = self._call_bedrock_converse(messages)
-            messages.append(assistant_msg)
 
             if stop_reason == "tool_use":
                 for tool_use_block in assistant_msg.find_tool_uses():
                     yield "==== ToolUse ===="
-                    yield "name: {}".format(tool_use_block["name"])
-                    yield "input: {}".format(tool_use_block["input"])
+                    yield f"name: {tool_use_block['name']}"
+                    yield f"input: {tool_use_block['input']}"
                     yield "================="
 
                     tool_result = await self._acall_tool(tool_use_block)
 
                     tool_result_msg = UserMessage([{"toolResult": tool_result}])
-                    messages.append(tool_result_msg)
 
             elif stop_reason == "end_turn":
                 assert len(assistant_msg.contents) == 1
@@ -73,6 +91,7 @@ class BedrockAgent:
                 is_end = True
             else:
                 raise ValueError(f"Unsupported stop_reason: {stop_reason}")
+
             if is_end:
                 break
 
@@ -118,7 +137,8 @@ class BedrockAgent:
         response = self.llm_client.converse(
             modelId=BEDROCK_MODEL_ID,
             messages=bedrock_conversion_messages,
-            toolConfig=tool_config
+            toolConfig=tool_config,
+            system=[{"text": SYSTEM_PROMPT}]
         )
         logger.debug(json.dumps(response, ensure_ascii=False))
 
