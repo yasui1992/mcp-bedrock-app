@@ -3,9 +3,7 @@ from typing import Protocol, Self
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
-    from mypy_boto3_bedrock_runtime.type_defs import (
-        ToolUseBlockOutputTypeDef
-    )
+    from mypy_boto3_bedrock_runtime.type_defs import ToolUseBlockOutputTypeDef
 
     from .interface import DisplayInterface
 

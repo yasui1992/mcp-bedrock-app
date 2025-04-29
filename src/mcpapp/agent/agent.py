@@ -52,13 +52,11 @@ class BedrockAgent:
         self,
         mcp_session: ClientSession,
         llm_client: "BedrockRuntimeClient",
-        max_actions: int = 10,
-        language: str = "ja"
+        max_actions: int = 10
     ):
         self.mcp_session = mcp_session
         self.llm_client = llm_client
         self.max_actions = max_actions
-        self.language = language
 
         self._tool_config = ToolConfig()
 
