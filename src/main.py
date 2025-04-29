@@ -1,14 +1,13 @@
 import asyncio
 import logging
 import os
-from typing import Final
 
 import boto3
 from botocore.config import Config
 from mcpapp import BedrockAgent, MCPClient, REPL
 
 
-LOG_LEVEL: Final[str] = os.getenv("LOG_LEVEL", "info").upper()
+LOG_LEVEL = os.getenv("LOG_LEVEL", "info").upper()
 
 
 logger = logging.getLogger("mcpapp")
