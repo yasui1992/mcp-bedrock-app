@@ -85,20 +85,19 @@ class BedrockAgent:
         )
         logger.debug(f"Tool response: {tool_response.model_dump_json()}")
 
-        if len(tool_response.content) > 1:
-            num_contents = len(tool_response.content)
-            raise ValueError(f"Expected exactly one content item, got: {num_contents}.")
+        contents = []
+        for cnt in tool_response.content:
+            assert isinstance(cnt, TextContent)
 
-        content_item = tool_response.content[0]
-        assert isinstance(content_item, TextContent)
+            contents.append({
+                "json": {
+                    "text": cnt.text
+                }
+            })
 
         return {
             "toolUseId": tool_use_block["toolUseId"],
-            "content": [{
-                "json": {
-                    "text": content_item.text
-                }
-            }]
+            "content": contents
         }
 
     def _call_bedrock_converse(
