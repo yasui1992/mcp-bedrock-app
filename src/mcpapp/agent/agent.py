@@ -8,6 +8,7 @@ from mcp.types import TextContent
 from mypy_boto3_bedrock_runtime import BedrockRuntimeClient
 from mypy_boto3_bedrock_runtime.literals import StopReasonType
 from mypy_boto3_bedrock_runtime.type_defs import (
+    SystemContentBlockTypeDef,
     ToolUseBlockOutputTypeDef,
     ToolResultBlockOutputTypeDef,
     ToolResultContentBlockOutputTypeDef
@@ -24,6 +25,17 @@ from mcpapp.agent.message import (
 logger = logging.getLogger(__name__)
 
 BEDROCK_MODEL_ID = os.environ["BEDROCK_MODEL_ID"]
+SYSTEM_PROMPT = """\
+You are a helpful assistant. To answer user queries:
+
+- Use tools to gather information when needed.
+- Refine your answer using the tool results.
+- Call more tools if necessary.
+
+When you use information from documents, include the document title, URL,
+and a reference section in your response. The reference section should be
+clearly marked as "Reference:" and placed at the end of your answer.
+"""
 
 
 class BedrockAgent:
@@ -32,10 +44,12 @@ class BedrockAgent:
         mcp_session: ClientSession,
         llm_client: BedrockRuntimeClient,
         max_actions: int = 10,
+        language: str = "ja"
     ):
         self.mcp_session = mcp_session
         self.llm_client = llm_client
         self.max_actions = max_actions
+        self.language = language
 
         self._tool_config = ToolConfig()
 
@@ -124,7 +138,8 @@ class BedrockAgent:
         response = self.llm_client.converse(
             modelId=BEDROCK_MODEL_ID,
             messages=bedrock_conversion_messages,
-            toolConfig=tool_config
+            toolConfig=tool_config,
+            system=[{"text": SYSTEM_PROMPT}]
         )
         logger.debug(json.dumps(response, ensure_ascii=False))
 
