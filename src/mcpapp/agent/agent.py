@@ -19,7 +19,7 @@ from .message import (
 )
 
 if TYPE_CHECKING:
-    from mypy_boto3_bedrock_runtime import BedrockRuntimeClient 
+    from mypy_boto3_bedrock_runtime import BedrockRuntimeClient
     from mypy_boto3_bedrock_runtime.literals import StopReasonType
     from mypy_boto3_bedrock_runtime.type_defs import (
         ToolUseBlockOutputTypeDef,
