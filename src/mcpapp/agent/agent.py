@@ -1,4 +1,4 @@
-from typing import AsyncGenerator
+from typing import cast, AsyncGenerator
 import json
 import logging
 import os
@@ -9,7 +9,8 @@ from mcp.types import TextContent
 from mypy_boto3_bedrock_runtime.literals import StopReasonType
 from mypy_boto3_bedrock_runtime.type_defs import (
     ToolUseBlockOutputTypeDef,
-    ToolResultBlockOutputTypeDef
+    ToolResultBlockOutputTypeDef,
+    ToolResultContentBlockOutputTypeDef
 )
 
 from mcpapp.agent.tool_config import ToolConfig
@@ -89,11 +90,12 @@ class BedrockAgent:
         for cnt in tool_response.content:
             assert isinstance(cnt, TextContent)
 
-            contents.append({
-                "json": {
-                    "text": cnt.text
-                }
-            })
+            content_to_bedrock = cast(
+                ToolResultContentBlockOutputTypeDef,
+                {"text": cnt.text}
+            )
+
+            contents.append(content_to_bedrock)
 
         return {
             "toolUseId": tool_use_block["toolUseId"],
