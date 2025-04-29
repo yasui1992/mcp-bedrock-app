@@ -47,25 +47,30 @@ class BedrockAgent:
 
     async def ainvoke(self, text: str) -> AsyncGenerator[str, None]:
         is_end = False
-        messages: list[MessageProtocol] = [
-            UserMessage([{"text": text}])
-        ]
+        original_user_msg = UserMessage([{"text": text}])
+
+        assistant_msg: AssistantMessage | None = None
+        tool_result_msg: UserMessage | None = None
 
         for _ in range(self.max_actions):
+            messages: list[MessageProtocol] = [original_user_msg]
+            if assistant_msg is not None:
+                messages.append(assistant_msg)
+            if tool_result_msg is not None:
+                messages.append(tool_result_msg)
+
             assistant_msg, stop_reason = self._call_bedrock_converse(messages)
-            messages.append(assistant_msg)
 
             if stop_reason == "tool_use":
                 for tool_use_block in assistant_msg.find_tool_uses():
                     yield "==== ToolUse ===="
-                    yield "name: {}".format(tool_use_block["name"])
-                    yield "input: {}".format(tool_use_block["input"])
+                    yield f"name: {tool_use_block['name']}"
+                    yield f"input: {tool_use_block['input']}"
                     yield "================="
 
                     tool_result = await self._acall_tool(tool_use_block)
 
                     tool_result_msg = UserMessage([{"toolResult": tool_result}])
-                    messages.append(tool_result_msg)
 
             elif stop_reason == "end_turn":
                 assert len(assistant_msg.contents) == 1
@@ -73,6 +78,7 @@ class BedrockAgent:
                 is_end = True
             else:
                 raise ValueError(f"Unsupported stop_reason: {stop_reason}")
+
             if is_end:
                 break
 
