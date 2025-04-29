@@ -3,6 +3,8 @@ import logging
 import os
 from typing import Final
 
+import boto3
+from botocore.config import Config
 from mcpapp import BedrockAgent, MCPClient, REPL
 
 
@@ -19,10 +21,18 @@ logger.addHandler(hdlr)
 
 
 async def main():
-    client = MCPClient()
+    boto3_config = Config(
+        retries={
+            "max_attempts": 10,
+            "mode": "adaptive"
+        }
+    )
 
-    async with client.aconnent_session() as session:
-        agent = BedrockAgent(session)
+    mcp_client = MCPClient()
+    llm_client = boto3.client("bedrock-runtime", config=boto3_config)
+
+    async with mcp_client.aconnent_session() as session:
+        agent = BedrockAgent(session, llm_client)
         await agent.afetch_tools()
 
         repl = REPL(agent)
