@@ -18,10 +18,7 @@ logger = logging.getLogger(__name__)
 
 class MCPClient:
     def __init__(self):
-        config_filepath = os.path.join(APP_DIR, CONFIG_FILENAME)
-        with open(config_filepath) as f:
-            server_params = json.load(f)
-        self._server_params = StdioServerParameters(**server_params)
+        self._server_params = self._load_config()
 
     @asynccontextmanager
     async def aconnent_session(self) -> AsyncGenerator[ClientSession, None]:
@@ -31,3 +28,17 @@ class MCPClient:
                 logger.debug(init_result.model_dump_json())
 
                 yield session
+
+    def _load_config(self) -> StdioServerParameters:
+        config_filepath = os.path.join(APP_DIR, CONFIG_FILENAME)
+
+        with open(config_filepath) as f:
+            config = json.load(f)
+        logger.debug(json.dumps(config))
+
+        mcp_servers = config["mcpServers"]
+        if len(mcp_servers) > 1:
+            raise ValueError("Unsupported multi-mcp servers")
+
+        server_params = next(iter(mcp_servers.values()))
+        return StdioServerParameters(**server_params)
