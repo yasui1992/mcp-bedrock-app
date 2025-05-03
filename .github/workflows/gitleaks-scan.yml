@@ -1,6 +1,8 @@
 name: Gitleaks Scan
 on:
-  pull_request:
+  push:
+    branches:
+      - 'main'
 jobs:
   gitleaks-scan:
     runs-on: ubuntu-latest
