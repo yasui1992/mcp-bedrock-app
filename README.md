@@ -37,14 +37,18 @@ The file is excluded from Git version control by `.gitignore`, so you can custom
 
 For example, create the `mcp_servers.json` file with the following contents:
 
-```json
+```.json
 {
-    "command": "uvx",
-    "args": [
-        "awslabs.aws-documentation-mcp-server@latest"
-    ],
-    "env": {
-        "FASTMCP_LOG_LEVEL": "ERROR"
+    "mcpServers": {
+        "aws-documentation": {
+            "command": "uvx",
+            "args": [
+                "awslabs.aws-documentation-mcp-server@latest"
+            ],
+            "env": {
+                "FASTMCP_LOG_LEVEL": "ERROR"
+            }
+        }
     }
 }
 ```
