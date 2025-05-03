@@ -1,11 +1,13 @@
 import logging
+from typing import TYPE_CHECKING
 
 from prompt_toolkit import PromptSession
 
 from .agent import BedrockAgent, DisplayInterface
+from .agent.action import TextResponseAction, ToolUseAction
 
-
-logger = logging.getLogger(__name__)
+if TYPE_CHECKING:
+    from .agent.action import AgentActionProtocol
 
 
 class REPL(DisplayInterface):
@@ -21,12 +23,20 @@ class REPL(DisplayInterface):
                 await self._handle_input_text(text)
             except (KeyboardInterrupt, EOFError):
                 break
+            except Exception:
+                raise
 
     async def _handle_input_text(self, text: str):
         if len(text) > 0:
             results = self.agent.ainvoke(text)
             async for chunk in results:
-                chunk.display(self)
+                self.display(chunk)
+
+    def display(self, chunk: "AgentActionProtocol"):
+        if isinstance(chunk, TextResponseAction):
+            self.display_text_response(chunk.text)
+        elif isinstance(chunk, ToolUseAction):
+            self.display_tool_use(chunk.name, chunk.tool_input)
 
     def display_text_response(self, text: str):
         print(text)
