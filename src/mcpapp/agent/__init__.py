@@ -1,5 +1,5 @@
 from .agent import BedrockAgent
-from .interface import DisplayMixin
+from .display import DisplayMixin
 
 
 __all__ = [

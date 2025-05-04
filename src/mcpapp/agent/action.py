@@ -5,7 +5,7 @@ from typing import TYPE_CHECKING
 if TYPE_CHECKING:
     from mypy_boto3_bedrock_runtime.type_defs import ToolUseBlockOutputTypeDef
 
-    from .interface import DisplayMixin
+    from .display import DisplayMixin
 
 
 class AgentActionProtocol(Protocol):
