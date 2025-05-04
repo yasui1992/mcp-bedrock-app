@@ -1,6 +1,6 @@
 # mcp-bedrock-app
 
-This project is intended for practice.
+This project is for personal practice and learning.
 
 ## Environment
 
@@ -64,4 +64,16 @@ If you want to enable debugging, run:
 
 ```sh
 make up-debug
+```
+
+To start the development environment with live code updates, run:
+
+```sh
+make up-dev
+```
+
+If you want to enable debugging in the development environment, run:
+
+```sh
+make up-dev-debug
 ```
