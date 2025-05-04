@@ -1,8 +1,8 @@
 from .agent import BedrockAgent
-from .interface import DisplayInterface
+from .display import DisplayMixin
 
 
 __all__ = [
     "BedrockAgent",
-    "DisplayInterface"
+    "DisplayMixin"
 ]

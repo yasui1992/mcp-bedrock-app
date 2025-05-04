@@ -1,13 +1,8 @@
 import logging
-from typing import TYPE_CHECKING
 
 from prompt_toolkit import PromptSession
 
-from .agent import BedrockAgent, DisplayInterface
-from .agent.action import TextResponseAction, ToolUseAction
-
-if TYPE_CHECKING:
-    from .agent.action import AgentActionProtocol
+from .agent import BedrockAgent, DisplayMixin
 
 
 logger = logging.getLogger(__name__)
@@ -18,7 +13,7 @@ class ExitREPL(Exception):
     pass
 
 
-class REPL(DisplayInterface):
+class REPL(DisplayMixin):
     def __init__(self, agent: BedrockAgent):
         self.agent = agent
 
@@ -50,12 +45,6 @@ class REPL(DisplayInterface):
             results = self.agent.ainvoke(text)
             async for chunk in results:
                 self.display(chunk)
-
-    def display(self, chunk: "AgentActionProtocol"):
-        if isinstance(chunk, TextResponseAction):
-            self.display_text_response(chunk.text)
-        elif isinstance(chunk, ToolUseAction):
-            self.display_tool_use(chunk.name, chunk.tool_input)
 
     def display_text_response(self, text: str):
         print(text)
