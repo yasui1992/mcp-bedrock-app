@@ -13,7 +13,7 @@ LOG_LEVEL = os.getenv("LOG_LEVEL", "info").upper()
 
 class OneLineFormatter(logging.Formatter):
     def formatException(self, exc_info):
-        return ''.join(traceback.format_exception(*exc_info)).replace("\n", "\\n")
+        return "".join(traceback.format_exception(*exc_info)).replace("\n", "\\n")
 
 # ロガーの設定
 logger = logging.getLogger(__name__)

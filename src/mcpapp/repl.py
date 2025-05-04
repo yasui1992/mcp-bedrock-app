@@ -1,4 +1,3 @@
-import logging
 from typing import TYPE_CHECKING
 
 from prompt_toolkit import PromptSession
@@ -10,24 +9,35 @@ if TYPE_CHECKING:
     from .agent.action import AgentActionProtocol
 
 
+class ExitREPL(Exception):
+    """Raised to signal that the REPL should exit."""
+    pass
+
+
 class REPL(DisplayInterface):
     def __init__(self, agent: BedrockAgent):
         self.agent = agent
 
     async def arun(self):
         session: PromptSession = PromptSession()
+        print("Welcome to the mcp-bedrock-app.")
+        print("Type 'exit' or press Ctrl+C / Ctrl+D to quit.")
 
         while True:
             try:
                 text = await session.prompt_async("> ")
                 await self._handle_input_text(text)
-            except (KeyboardInterrupt, EOFError):
+            except (KeyboardInterrupt, EOFError, ExitREPL):
                 break
             except Exception:
                 raise
 
     async def _handle_input_text(self, text: str):
-        if len(text) > 0:
+        if len(text) == 0:
+            pass
+        elif text == "exit":
+            raise ExitREPL("Typed 'exit'.")
+        else:
             results = self.agent.ainvoke(text)
             async for chunk in results:
                 self.display(chunk)
