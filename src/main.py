@@ -1,7 +1,6 @@
 import asyncio
 import logging
 import os
-import traceback
 
 import boto3
 from botocore.config import Config
@@ -11,17 +10,13 @@ from mcpapp import BedrockAgent, MCPClient, REPL
 LOG_LEVEL = os.getenv("LOG_LEVEL", "info").upper()
 
 
-class OneLineFormatter(logging.Formatter):
-    def formatException(self, exc_info):
-        return "".join(traceback.format_exception(*exc_info)).replace("\n", "\\n")
-
-# ロガーの設定
-logger = logging.getLogger(__name__)
-handler = logging.StreamHandler()
-formatter = OneLineFormatter(r"%(asctime)s %(levelname)-8s %(message)s %(exception)s")
-handler.setFormatter(formatter)
-logger.addHandler(handler)
-logger.setLevel(logging.ERROR)
+logger = logging.getLogger("mcpapp")
+logger.setLevel(LOG_LEVEL)
+hdlr = logging.StreamHandler()
+hdlr.setLevel(logging.NOTSET)
+fmt = logging.Formatter(r"%(asctime)s %(levelname)-8s %(name)s %(message)s")
+hdlr.setFormatter(fmt)
+logger.addHandler(hdlr)
 
 
 async def main():
