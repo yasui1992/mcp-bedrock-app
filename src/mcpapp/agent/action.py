@@ -5,12 +5,12 @@ from typing import TYPE_CHECKING
 if TYPE_CHECKING:
     from mypy_boto3_bedrock_runtime.type_defs import ToolUseBlockOutputTypeDef
 
-    from .interface import DisplayInterface
+    from .interface import DisplayMixin
 
 
 class AgentActionProtocol(Protocol):
     @abstractmethod
-    def display(self, ui: "DisplayInterface"):
+    def display(self, ui: "DisplayMixin"):
         ...
 
 
@@ -18,7 +18,7 @@ class TextResponseAction:
     def __init__(self, text: str):
         self.text = text
 
-    def display(self, ui: "DisplayInterface"):
+    def display(self, ui: "DisplayMixin"):
         ui.display_text_response(self.text)
 
 
@@ -27,7 +27,7 @@ class ToolUseAction:
         self.name = name
         self.tool_input = tool_input
 
-    def display(self, ui: "DisplayInterface"):
+    def display(self, ui: "DisplayMixin"):
         ui.display_tool_use(self.name, self.tool_input)
 
     @classmethod
