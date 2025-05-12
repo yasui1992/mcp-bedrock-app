@@ -85,7 +85,6 @@ class BedrockAgent:
             if stop_reason == "tool_use":
                 # Clear tool result messages for this round
                 tool_result_msgs = []
-                
                 for tool_use_block in assistant_msg.find_tool_uses():
                     yield ToolUseAction.from_bedrock_block(tool_use_block)
 
