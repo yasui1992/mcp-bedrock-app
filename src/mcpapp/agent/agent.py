@@ -71,23 +71,27 @@ class BedrockAgent:
         original_user_msg = UserMessage([{"text": text}])
 
         assistant_msg: AssistantMessage | None = None
-        tool_result_msg: UserMessage | None = None
+        tool_result_msgs: list[UserMessage] = []
 
         for _ in range(self.max_actions):
             messages: list["MessageProtocol"] = [original_user_msg]
             if assistant_msg is not None:
                 messages.append(assistant_msg)
-            if tool_result_msg is not None:
-                messages.append(tool_result_msg)
+            # Add all tool result messages to preserve history
+            messages.extend(tool_result_msgs)
 
             assistant_msg, stop_reason = self._call_bedrock_converse(messages)
 
             if stop_reason == "tool_use":
+                # Clear tool result messages for this round
+                tool_result_msgs = []
+                
                 for tool_use_block in assistant_msg.find_tool_uses():
                     yield ToolUseAction.from_bedrock_block(tool_use_block)
 
                     tool_result = await self._acall_tool(tool_use_block)
-                    tool_result_msg = UserMessage([{"toolResult": tool_result}])
+                    # Add each tool result message to the list
+                    tool_result_msgs.append(UserMessage([{"toolResult": tool_result}]))
 
             elif stop_reason == "end_turn":
                 assert len(assistant_msg.contents) == 1
