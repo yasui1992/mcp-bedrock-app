@@ -149,7 +149,21 @@ self.llm_client = llm_client
 
         tool_config = self._tool_config.dump_to_converse_dict()
 
-        response = self.llm_client.converse(
+tool_config = self._tool_config.dump_to_converse_dict()
+
+        try:
+            response = self.llm_client.converse(
+                modelId=self._model_id,
+                messages=bedrock_conversion_messages,
+                toolConfig=tool_config,
+                system=[{"text": SYSTEM_PROMPT}]
+            )
+            logger.debug(json.dumps(response, ensure_ascii=False))
+        except Exception as e:
+            logger.error(f"Error during LLM client converse: {str(e)}")
+            raise
+
+        assert response["output"]["message"]["role"] == "assistant"
             modelId=self._model_id,
             messages=bedrock_conversion_messages,
             toolConfig=tool_config,
