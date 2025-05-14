@@ -57,7 +57,16 @@ class BedrockAgent:
         self.llm_client = llm_client
         self.max_actions = max_actions
 
-        self._model_id = os.environ["BEDROCK_MODEL_ID"]
+self.llm_client = llm_client
+        self.max_actions = max_actions
+
+        # import os
+        self._model_id = os.environ.get("BEDROCK_MODEL_ID")
+        if self._model_id is None:
+            raise ValueError("BEDROCK_MODEL_ID environment variable is not set")
+        self._tool_config = ToolConfig()
+
+    async def afetch_tools(self):
         self._tool_config = ToolConfig()
 
     async def afetch_tools(self):
