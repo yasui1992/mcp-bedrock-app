@@ -67,16 +67,6 @@ run-mypy:
 	mcp-bedrock-client:dev \
 	mypy .
 
-run-test:
-	@docker run \
-	--rm \
-	-v ./src:/app/src \
-	-v ./tests:/app/tests \
-	-v ./pyproject.toml:/app/pyproject.toml \
-	-i \
-	mcp-bedrock-client:dev \
-	python -m pytest -v
-
 up: build run
 
 up-debug: build run-debug
@@ -86,5 +76,3 @@ up-dev: build-dev run-dev
 up-dev-debug: build-dev run-dev-debug
 
 up-check: build-dev run-ruff run-mypy
-
-test: build-dev run-test
