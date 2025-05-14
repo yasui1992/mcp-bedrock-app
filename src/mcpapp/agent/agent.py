@@ -33,6 +33,7 @@ if TYPE_CHECKING:
 
 logger = logging.getLogger(__name__)
 
+BEDROCK_MODEL_ID = os.environ["BEDROCK_MODEL_ID"]
 SYSTEM_PROMPT = """\
 You are a helpful assistant. To answer user queries:
 
@@ -57,7 +58,6 @@ class BedrockAgent:
         self.llm_client = llm_client
         self.max_actions = max_actions
 
-        self._model_id = os.environ["BEDROCK_MODEL_ID"]
         self._tool_config = ToolConfig()
 
     async def afetch_tools(self):
@@ -141,7 +141,7 @@ class BedrockAgent:
         tool_config = self._tool_config.dump_to_converse_dict()
 
         response = self.llm_client.converse(
-            modelId=self._model_id,
+            modelId=BEDROCK_MODEL_ID,
             messages=bedrock_conversion_messages,
             toolConfig=tool_config,
             system=[{"text": SYSTEM_PROMPT}]
