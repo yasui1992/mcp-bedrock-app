@@ -1,41 +1,40 @@
 # mcp-bedrock-app
 
-This project is for personal practice and learning.
+このプロジェクトは個人の学習と練習を目的としています。
 
 ## Environment
 
-- Architecture: x86_64
+- アーキテクチャ: x86_64
 - OS: Ubuntu 24.04.2 LTS  
-  (Confirmed on Ubuntu 24.04.2 LTS. May also work on most Linux distributions.)
+  （`Ubuntu 24.04.2 LTS`で動作確認しています。ほとんどのLinuxディストリビューションでも動作すると思います）
 - Required tools:
   - make
   - Docker
 
 ## Preparation
 
-### Environment variables
-To configure the necessary environment variables for AWS and Bedrock:
+### 環境変数の設定
+AWSとBedrockの環境変数を`.env`に設定します。
 
-1. Set up AWS credentials (with an IAM role that has access to the Bedrock Converse API).
-2. Set the Bedrock model ID.
+- Bedrock Converse APIの実行権限を持つIAMロールのcredentials
+- BedrockのモデルID
 
-Run the following command to create or update your `.env` file:
+以下のコマンドは例です。
 
 ```sh
 cat <<EOF > .env
 AWS_ACCESS_KEY_ID=...
 AWS_SECRET_ACCESS_KEY=...
-AWS_DEFAULT_REGION=ap-northeast-1
+AWS_DEFAULT_REGION=...
 BEDROCK_MODEL_ID=anthropic.claude-3-haiku-20240307-v1:0
 EOF
 ```
 
-### Set up mcp_servers.json
-You will also need to set up the `mcp_servers.json` file in the same directory as the `README.md` file. 
-It is used to configure the MCP server settings.
-The file is excluded from Git version control by `.gitignore`, so you can customize it as needed.
+### `mcp_servers.json`の設定
+`README.md`と同じディレクトリに`mcp_servers.json`ファイルを用意してください。このファイルはMCPサーバの設定に使用されます。
+`.gitignore`によりGit管理から除外されているので、必要に応じてカスタマイズ可能です。  
 
-For example, create the `mcp_servers.json` file with the following contents:
+例として、以下の内容で`mcp_servers.json`を作成します。
 
 ```.json
 {
@@ -54,43 +53,26 @@ For example, create the `mcp_servers.json` file with the following contents:
 ```
 
 ## Usage
-To start the application, run:
+アプリケーションを起動するには、下記のコマンドを実行します。
 
 ```sh
 make up
 ```
 
-If you want to enable debugging, run:
+デバッグモードで起動するには、下記のコマンドを実行します。
 
 ```sh
 make up-debug
 ```
 
-To start the development environment with live code updates, run:
+開発環境で起動するには、下記のコマンドを実行します。
 
 ```sh
 make up-dev
 ```
 
-If you want to enable debugging in the development environment, run:
+開発環境かつデバッグモードで起動するには、下記のコマンドを実行します。
 
 ```sh
 make up-dev-debug
 ```
-
-## Testing
-
-To run the tests, use:
-
-```sh
-make test
-```
-
-## Recent Changes
-
-### Multiple Tool Results Preservation
-
-The application now properly preserves all tool results in the conversation history when multiple tools are returned from a single Bedrock ConverseAPI call. Previously, only the last tool result was being preserved in the history.
-
-This change ensures that when the LLM suggests multiple tools in a single response, all tool results are included in the conversation context for subsequent interactions, leading to more coherent and contextually aware responses.
-
