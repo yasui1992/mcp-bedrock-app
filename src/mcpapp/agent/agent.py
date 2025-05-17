@@ -36,8 +36,11 @@ logger = logging.getLogger(__name__)
 BEDROCK_MODEL_ID = os.environ["BEDROCK_MODEL_ID"]
 SYSTEM_PROMPT = (
     "You are a helpful assistant. Use the tools when necessary. "
-    "When referencing external information, always include concrete source citations such as official documentation URLs. "
-    "Provide concise, relevant explanations and list URLs clearly at the end of your response."
+    "When referencing external information, "
+    "always include concrete source citations "
+    "such as official documentation URLs. "
+    "Provide concise, relevant explanations "
+    "and list URLs clearly at the end of your response."
 )
 
 
