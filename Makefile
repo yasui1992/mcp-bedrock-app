@@ -53,20 +53,6 @@ run-dev-debug:
 	-it \
 	mcp-bedrock-app:dev
 
-run-ruff:
-	@docker run \
-	--rm \
-	-i \
-	mcp-bedrock-app:dev \
-	ruff check .
-
-run-mypy:
-	@docker run \
-	--rm \
-	-i \
-	mcp-bedrock-app:dev \
-	mypy .
-
 up: build run
 
 up-debug: build run-debug
@@ -74,5 +60,3 @@ up-debug: build run-debug
 up-dev: build-dev run-dev
 
 up-dev-debug: build-dev run-dev-debug
-
-up-check: build-dev run-ruff run-mypy
