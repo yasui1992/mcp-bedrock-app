@@ -2,7 +2,7 @@ build:
 	docker build \
 	--platform linux/x86_64 \
 	--target prod \
-	-t mcp-bedrock-client \
+	-t mcp-bedrock-app \
 	.
 
 
@@ -10,40 +10,40 @@ build-dev:
 	docker build \
 	--platform linux/x86_64 \
 	--target dev \
-	-t mcp-bedrock-client:dev \
+	-t mcp-bedrock-app:dev \
 	.
 
 run:
 	docker run \
-	--name mcp-bedrock-client \
+	--name mcp-bedrock-app \
 	--env-file .env \
 	--rm \
 	-it \
-	mcp-bedrock-client
+	mcp-bedrock-app
 
 run-debug:
 	docker run \
-	--name mcp-bedrock-client \
+	--name mcp-bedrock-app \
 	--env-file .env \
 	--rm \
 	-e LOG_LEVEL=debug \
 	-it \
-	mcp-bedrock-client
+	mcp-bedrock-app
 
 run-dev:
 	docker run \
-	--name mcp-bedrock-client-dev \
+	--name mcp-bedrock-app-dev \
 	--env-file .env \
 	--rm \
 	-v ./src:/app/src \
 	-v ./pyproject.toml:/app/pyproject.toml \
 	-v ./uv.lock:/app/uv.lock \
 	-it \
-	mcp-bedrock-client:dev
+	mcp-bedrock-app:dev
 
 run-dev-debug:
 	docker run \
-	--name mcp-bedrock-client-dev \
+	--name mcp-bedrock-app-dev \
 	--env-file .env \
 	--rm \
 	-e LOG_LEVEL=debug \
@@ -51,20 +51,20 @@ run-dev-debug:
 	-v ./pyproject.toml:/app/pyproject.toml \
 	-v ./uv.lock:/app/uv.lock \
 	-it \
-	mcp-bedrock-client:dev
+	mcp-bedrock-app:dev
 
 run-ruff:
 	@docker run \
 	--rm \
 	-i \
-	mcp-bedrock-client:dev \
+	mcp-bedrock-app:dev \
 	ruff check .
 
 run-mypy:
 	@docker run \
 	--rm \
 	-i \
-	mcp-bedrock-client:dev \
+	mcp-bedrock-app:dev \
 	mypy .
 
 up: build run
