@@ -27,9 +27,6 @@ class ToolUseAction:
         self.name = name
         self.tool_input = tool_input
 
-    def display(self, ui: "DisplayMixin"):
-        ui.display_tool_use(self.name, self.tool_input)
-
     @classmethod
     def from_bedrock_block(cls, tool_use: "ToolUseBlockOutputTypeDef") -> Self:
         return cls(
