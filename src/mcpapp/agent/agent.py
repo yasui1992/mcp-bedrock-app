@@ -34,17 +34,11 @@ if TYPE_CHECKING:
 logger = logging.getLogger(__name__)
 
 BEDROCK_MODEL_ID = os.environ["BEDROCK_MODEL_ID"]
-SYSTEM_PROMPT = """\
-You are a helpful assistant. To answer user queries:
-
-- Use tools to gather information when needed.
-- Refine your answer using the tool results.
-- Call more tools if necessary.
-
-When you use information from documents, include the document title, URL,
-and a reference section in your response. The reference section should be
-clearly marked as "Reference:" and placed at the end of your answer.
-"""
+SYSTEM_PROMPT = (
+    "You are a helpful assistant. Use the tools when necessary. "
+    "When referencing external information, always include concrete source citations such as official documentation URLs. "
+    "Provide concise, relevant explanations and list URLs clearly at the end of your response."
+)
 
 
 class BedrockAgent:

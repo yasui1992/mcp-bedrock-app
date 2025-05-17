@@ -35,7 +35,6 @@ async def main():
         await agent.afetch_tools()
 
         repl = REPL(agent)
-
         await repl.arun()
 
 
