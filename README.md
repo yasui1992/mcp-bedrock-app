@@ -77,3 +77,20 @@ If you want to enable debugging in the development environment, run:
 ```sh
 make up-dev-debug
 ```
+
+## Testing
+
+To run the tests, use:
+
+```sh
+make test
+```
+
+## Recent Changes
+
+### Multiple Tool Results Preservation
+
+The application now properly preserves all tool results in the conversation history when multiple tools are returned from a single Bedrock ConverseAPI call. Previously, only the last tool result was being preserved in the history.
+
+This change ensures that when the LLM suggests multiple tools in a single response, all tool results are included in the conversation context for subsequent interactions, leading to more coherent and contextually aware responses.
+
